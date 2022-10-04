@@ -14,12 +14,13 @@ public static class ConvertFileHelper
             FileName = file.ContentType,
         };
 
-        var fileStream = file.OpenReadStream();
-        var readerFileStream = new StreamReader(fileStream);
-        fileData.Data = Encoding.Unicode.GetBytes(await readerFileStream.ReadToEndAsync());
-
-        fileStream.Dispose();
-        readerFileStream.Dispose();
+        using (var fileStream = file.OpenReadStream())
+        {
+            using (var readerFileStream = new StreamReader(fileStream))
+            {
+                fileData.Data = Encoding.Unicode.GetBytes(await readerFileStream.ReadToEndAsync());
+            }
+        }
 
         return fileData;
     }
